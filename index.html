@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> الداء و الدواء- للإمام ابن القيم رحمه الله</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap');
+
+        /* Base styles */
+        body {
+            font-family: 'Amiri', serif; /* استخدام خط أميري للنص العربي */
+            background-color: #f3f4f6; /* خلفية رمادية فاتحة */
+            color: #575862;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease; /* انتقال سلس لتغيير الثيم */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 1rem; /* زوايا أكثر استدارة */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* ظل أنعم */
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* توزيع المحتوى والتحكم في المساحة */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .quote-text {
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            color: #4a5568; /* نص أغمق قليلاً لسهولة القراءة */
+        }
+        .page-number {
+            font-size: 0.9rem;
+            color: #718096;
+            text-align: end;
+            font-family: 'Inter', sans-serif; /* Inter للأرقام */
+        }
+        .keyword-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px; /* مستدير بالكامل */
+            margin: 0.3rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            color: white; /* نص أبيض للتباين */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* ظل نص خفيف */
+        }
+        .keyword-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .search-input {
+            border: 1px solid #cbd5e0;
+            border-radius: 0.75rem; /* حقل بحث مستدير */
+            padding: 0.75rem 1.25rem;
+            width: 100%;
+            font-size: 1rem;
+            color: #4a5568;
+            background-color: #fff;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #63b3ed; /* حلقة تركيز زرقاء */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        .header-title {
+            font-family: 'Amiri', serif;
+            font-size: 2.5rem; /* عنوان أكبر */
+            font-weight: 700;
+            color: #2c5282; /* أزرق داكن */
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0; /* خط سفلي خفيف */
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            top: 0;
+            right: -250px; /* مخفي افتراضياً */
+            height: 100%;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .sidebar.open {
+            right: 0; /* يظهر */
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none; /* مخفي افتراضياً */
+        }
+        .sidebar-overlay.open {
+            display: block; /* يظهر عندما يكون الشريط الجانبي مفتوحاً */
+        }
+        .sidebar-category-item {
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.05rem;
+            color: #4a5568;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .sidebar-category-item:hover {
+            background-color: #edf2f7;
+            color: #2c5282;
+        }
+        .sidebar-category-item.active {
+            background-color: #2c5282;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-button {
+            background-color: #e2e8f0;
+            color: #2d3748;
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .theme-toggle-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hamburger Menu Icon */
+        .hamburger-icon {
+            display: block; /* يظهر على الجوال */
+            cursor: pointer;
+            padding: 0.5rem;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .hamburger-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #4a5568;
+            transition: fill 0.3s ease;
+        }
+
+        /* Action Buttons for Quotes */
+        .quote-actions {
+            display: flex;
+            justify-content: flex-end; /* الأزرار إلى اليسار في RTL */
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .action-button {
+            background-color: #edf2f7;
+            color: #2c5282;
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .action-button:hover {
+            background-color: #dbeafe;
+            transform: translateY(-1px);
+        }
+        .action-button:active {
+            transform: translateY(0);
+        }
+        .action-button svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Message Box for Copy Feedback */
+        .message-box {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .message-box.show {
+            opacity: 1;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #1a202c; /* خلفية أغمق */
+            color: #e2e8f0; /* نص أفتح */
+        }
+        body.dark-mode .card {
+            background-color: #2d3748; /* خلفية بطاقة أغمق */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        body.dark-mode .quote-text {
+            color: #cbd5e0; /* نص اقتباس أفتح */
+        }
+        body.dark-mode .page-number {
+            color: #a0aec0; /* رقم صفحة أفتح */
+        }
+        body.dark-mode .search-input {
+            background-color: #4a5568;
+            border-color: #616e7f;
+            color: #e2e8f0;
+        }
+        body.dark-mode .search-input::placeholder {
+            color: #a0aec0;
+        }
+        body.dark-mode .header-title {
+            color: #90cdf4; /* أزرق أفتح للعنوان */
+            border-color: #4a5568;
+        }
+        body.dark-mode .sidebar {
+            background-color: #2d3748;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        body.dark-mode .sidebar-category-item {
+            color: #cbd5e0;
+        }
+        body.dark-mode .sidebar-category-item:hover {
+            background-color: #4a5568;
+            color: #90cdf4;
+        }
+        body.dark-mode .sidebar-category-item.active {
+            background-color: #90cdf4;
+            color: #2d3748;
+        }
+        body.dark-mode .theme-toggle-button {
+            background-color: #4a5568;
+            color: #e2e8f0;
+        }
+        body.dark-mode .hamburger-icon {
+            background-color: #2d3748;
+        }
+        body.dark-mode .hamburger-icon svg {
+            fill: #e2e8f0;
+        }
+        body.dark-mode .action-button {
+            background-color: #4a5568;
+            color: #90cdf4;
+        }
+        body.dark-mode .action-button:hover {
+            background-color: #616e7f;
+            color: #90cdf4;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) { /* md breakpoint */
+            .main-layout {
+                display: grid;
+                grid-template-columns: 250px 1fr; /* الشريط الجانبي على اليسار، المحتوى على اليمين */
+                gap: 1.5rem;
+            }
+            .sidebar {
+                position: static; /* وضع ثابت */
+                right: auto;
+                height: auto;
+                grid-column: 1 / 2; /* يوضع في العمود الأول */
+                transition: none; /* لا يوجد انتقال انزلاقي */
+            }
+            .sidebar-overlay {
+                display: none !important; /* إخفاء التراكب على الشاشات الأكبر */
+            }
+            .hamburger-icon {
+                display: none; /* إخفاء أيقونة الهامبرغر على الشاشات الأكبر */
+            }
+            .content-area {
+                grid-column: 2 / 3; /* يوضع في العمود الثاني */
+            }
+            .theme-toggle-container {
+                display: block; /* Show theme toggle on larger screens */
+                position: absolute;
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+        }
+
+        @media (max-width: 767px) { /* Mobile specific adjustments */
+            .theme-toggle-container {
+                display: none; /* Hide the absolute positioned theme toggle on mobile */
+            }
+        }
+
+        @media (min-width: 640px) { /* sm breakpoint */
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <div class="flex justify-between items-center p-4 md:hidden">
+        <button id="hamburger-button" class="hamburger-icon">
+            <svg viewBox="0 0 100 80" width="25" height="25">
+                <rect width="100" height="10" rx="5"></rect>
+                <rect y="30" width="100" height="10" rx="5"></rect>
+                <rect y="60" width="100" height="10" rx="5"></rect>
+            </svg>
+        </button>
+        <button id="theme-toggle-mobile" class="theme-toggle-button">
+            <span id="theme-icon-mobile">☀️</span>
+            <span id="theme-text-mobile">الوضع الليلي</span>
+        </button>
+    </div>
+
+    <div class="theme-toggle-container hidden md:block">
+        <button id="theme-toggle-desktop" class="theme-toggle-button">
+            <span id="theme-icon-desktop">☀️</span>
+            <span id="theme-text-desktop">الوضع الليلي</span>
+        </button>
+    </div>
+
+    <div class="main-layout container py-8">
+        <aside class="sidebar" id="sidebar">
+            <h3 class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200">الفهرس</h3>
+            <ul id="category-list">
+                </ul>
+        </aside>
+
+        <main class="content-area">
+            <header class="mb-8">
+                <h1 class="header-title">الداء و الدواء</h1>
+                <h3 class="header">يُعد كتاب **"الداء والدواء"** للإمام **ابن القيم الجوزية** - رحمه الله - من أبرز المؤلفات الإسلامية التي جمعت بين **الروحانية والعلاج النفسي**، حيث يتناول قضايا القلب والأمراض المعنوية وطرق شفائها بالقرآن والسنة. .</h3>
+            </header>
+
+            <section class="mb-8 p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">الكلمات الأكثر بحثاً</h2>
+                <div id="keywords-container" class="flex flex-wrap justify-center sm:justify-start gap-2 mb-6">
+                    </div>
+                <input type="text" id="search-input" class="search-input" placeholder="ابحث عن اقتباس..." aria-label="بحث عن اقتباس">
+            </section>
+
+            <section id="quotes-container" class="cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </section>
+        </main>
+    </div>
+
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const quotes = [
+                { text: "من خاف الله، خافه كل شيء. ومن لم يخف الله، أخافه الله من كل شيء.", page: 15, category: "الخوف والرجاء" },
+                { text: "القلب السليم هو الذي سلم من الشرك والغل والحقد والحسد والشح والكبر وحب الدنيا والرياسة.", page: 32, category: "القلب" },
+                { text: "الدعاء مفتاح كل خير، وباب كل سعادة.", page: 48, category: "الدعاء" },
+                { text: "المعصية تورث الذل، والطاعة تورث العز.", page: 65, category: "الطاعة والمعصية" },
+                { text: "لا يزال العبد يتقرب إلى الله بالنوافل حتى يحبه، فإذا أحبه كان سمعه الذي يسمع به، وبصره الذي يبصر به، ويده التي يبطش بها، ورجله التي يمشي بها.", page: 81, category: "التقرب إلى الله" },
+                { text: "أساس كل خير في الدنيا والآخرة هو الإقبال على الله، والتوكل عليه، والاستعانة به، والافتقار إليه.", page: 99, category: "التوكل" },
+                { text: "إذا استغنى الناس بالدنيا فاستغن أنت بالله، وإذا فرحوا بالدنيا فافرح أنت بالله، وإذا أنسوا بأحبابهم فاجعل أنسك بالله.", page: 112, category: "الزهد في الدنيا" },
+                { text: "العلم بالله يوجب محبته، والخوف منه، ورجاءه، والتوكل عليه، والإنابة إليه.", page: 130, category: "العلم" },
+                { text: "من علامات الإيمان الصادق أن يكون العبد أشد ما يكون خوفًا من الله، وأشد ما يكون رجاءً له.", page: 145, category: "الإيمان" },
+                { text: "الرضا بقضاء الله وقدره من أعظم مقامات الإيمان.", page: 160, category: "الرضا" },
+                { text: "التوبة النصوح هي التي يندم صاحبها على ما فات، ويعزم على أن لا يعود، ويستغفر الله، ويرد المظالم.", page: 175, category: "التوبة" },
+                { text: "الصبر على الطاعة أشد من الصبر عن المعصية.", page: 190, category: "الصبر" },
+                { text: "الاستغفار يفتح الأبواب المغلقة، ويحل العقد المستعصية.", page: 205, category: "الاستغفار" },
+                { text: "كلما قوي إيمان العبد، قوي توكله على الله، وكلما قوي توكله، قويت عزيمته.", page: 220, category: "التوكل" },
+                { text: "القلوب أوعية، فاملأوها بما تحبون أن تلقوا الله به.", page: 235, category: "القلب" },
+                { text: "من عرف ربه، أحبه. ومن أحبه، أطاعه. ومن أطاعه، فاز.", page: 250, category: "معرفة الله" },
+                { text: "لا راحة للمؤمن إلا بلقاء ربه.", page: 265, category: "الآخرة" },
+                { text: "الذكر نور القلب، وغذاء الروح.", page: 280, category: "الذكر" },
+                { text: "التوكل على الله هو اعتماد القلب على الله وحده في جلب المنافع ودفع المضار.", page: 295, category: "التوكل" },
+                { text: "الحياء من الله هو أصل كل خير.", page: 310, category: "الحياء" },
+                { text: "القرآن هو شفاء القلوب من أمراضها.", page: 325, category: "القرآن" },
+                { text: "السعادة في الإقبال على الله، والشقاوة في الإعراض عنه.", page: 340, category: "السعادة والشقاء" },
+                { text: "العافية لا يعدلها شيء، فاشكروا الله عليها.", page: 355, category: "الشكر" },
+                { text: "طلب العلم فريضة على كل مسلم ومسلمة.", page: 370, category: "العلم" },
+                { text: "الصدق طمأنينة والكذب ريبة.", page: 385, category: "الصدق والكذب" },
+                { text: "من لزم الاستغفار جعل الله له من كل هم فرجا ومن كل ضيق مخرجا ورزقه من حيث لا يحتسب.", page: 400, category: "الاستغفار" },
+                { text: "الدنيا سجن المؤمن وجنة الكافر.", page: 415, category: "الزهد في الدنيا" },
+                { text: "المؤمن كيس فطن حذر.", page: 430, category: "الإيمان" },
+                { text: "التفكر في آيات الله يزيد الإيمان.", page: 445, category: "التفكر" },
+                { text: "حسن الخلق يذيب الخطايا كما يذيب الماء الجليد.", page: 460, category: "الأخلاق" },
+                { text: "لا يزال العبد في خير ما لم ييأس.", page: 475, category: "الرجاء" },
+                { text: "أصل كل معصية الغفلة عن الله.", page: 490, category: "الطاعة والمعصية" },
+                { text: "رحمة الله وسعت كل شيء.", page: 505, category: "رحمة الله" },
+                { text: "العمل الصالح يرفع صاحبه.", page: 520, category: "العمل الصالح" },
+                { text: "القلب بيت الرب فلا تسكن فيه غيره.", page: 535, category: "القلب" },
+                { text: "من أعظم أسباب سعة الرزق تقوى الله.", page: 550, category: "الرزق" },
+                { text: "الجنة تحت أقدام الأمهات.", page: 565, category: "الوالدين" },
+                { text: "الصلاة عماد الدين.", page: 580, category: "الصلاة" },
+                { text: "الزكاة تطهير للمال وزيادة فيه.", page: 595, category: "الزكاة" },
+                { text: "الصوم جنة.", page: 610, category: "الصوم" },
+                { text: "الحج المبرور ليس له جزاء إلا الجنة.", page: 625, category: "الحج" },
+                { text: "بر الوالدين من أعظم القربات.", page: 640, category: "الوالدين" },
+                { text: "صلة الرحم تزيد في العمر وتبارك في الرزق.", page: 655, category: "صلة الرحم" },
+                { text: "الجار قبل الدار.", page: 670, category: "الجوار" },
+                { text: "الصدقة تطفئ الخطيئة كما يطفئ الماء النار.", page: 685, category: "الصدقة" },
+                { text: "الإحسان إلى الخلق من كمال الإيمان.", page: 700, category: "الإحسان" },
+                { text: "الكلمة الطيبة صدقة.", page: 715, category: "اللسان" },
+                { text: "التبسم في وجه أخيك صدقة.", page: 730, category: "الأخلاق" },
+                { text: "لا تحقرن من المعروف شيئا.", page: 745, category: "الخير" },
+                { text: "الدين النصيحة.", page: 760, category: "النصيحة" }
+            ];
+
+            const keywords = [
+                "الخوف من الله", "القلب السليم", "الدعاء", "المعصية", "النوافل",
+                "التوكل", "الإقبال على الله", "العلم بالله", "الإيمان", "الرضا",
+                "التوبة", "الصبر", "الاستغفار", "القلوب", "الذكر", "الحياء",
+                "القرآن", "السعادة", "الشكر", "الصدق", "الرزق", "الوالدين",
+                "الصلاة", "الزكاة", "الصوم", "الحج", "صلة الرحم", "الصدقة", "الأخلاق"
+            ];
+
+            const searchInput = document.getElementById('search-input');
+            const quotesContainer = document.getElementById('quotes-container');
+            const keywordsContainer = document.getElementById('keywords-container');
+            const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+            const themeIconMobile = document.getElementById('theme-icon-mobile');
+            const themeTextMobile = document.getElementById('theme-text-mobile');
+            const themeToggleDesktop = document.getElementById('theme-toggle-desktop');
+            const themeIconDesktop = document.getElementById('theme-icon-desktop');
+            const themeTextDesktop = document.getElementById('theme-text-desktop');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const hamburgerButton = document.getElementById('hamburger-button');
+            const categoryList = document.getElementById('category-list');
+            const messageBox = document.getElementById('message-box');
+
+            const backgroundColors = [
+                'bg-blue-500', 'bg-green-500', 'bg-red-500', 'bg-purple-500',
+                'bg-yellow-500', 'bg-indigo-500', 'bg-pink-500', 'bg-teal-500',
+                'bg-orange-500', 'bg-cyan-500', 'bg-lime-500', 'bg-fuchsia-500'
+            ];
+
+            let currentCategory = 'الكل'; // الفئة الافتراضية
+
+            // دالة للحصول على فئة لون خلفية عشوائية من Tailwind
+            function getRandomColorClass() {
+                return backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+            }
+
+            // عرض رسالة مؤقتة للمستخدم
+            function showMessage(message) {
+                messageBox.textContent = message;
+                messageBox.classList.add('show');
+                setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, 2000); // إخفاء الرسالة بعد 2 ثانية
+            }
+
+            // عرض الكلمات المفتاحية (8 فقط)
+            function renderKeywords() {
+                keywordsContainer.innerHTML = '';
+                // عرض 8 كلمات مفتاحية فقط
+                keywords.slice(0, 8).forEach(keyword => {
+                    const tag = document.createElement('span');
+                    tag.className = `keyword-tag ${getRandomColorClass()}`;
+                    tag.textContent = keyword;
+                    tag.addEventListener('click', () => {
+                        searchInput.value = keyword;
+                        filterQuotes(keyword, currentCategory);
+                    });
+                    keywordsContainer.appendChild(tag);
+                });
+            }
+
+            // عرض الاقتباسات
+            function renderQuotes(filteredQuotes) {
+                quotesContainer.innerHTML = '';
+                if (filteredQuotes.length === 0) {
+                    quotesContainer.innerHTML = '<p class="text-center text-gray-600 dark:text-gray-400 col-span-full">لا توجد اقتباسات مطابقة لبحثك أو الفئة المختارة.</p>';
+                    return;
+                }
+                filteredQuotes.forEach(quote => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <p class="quote-text">${quote.text}</p>
+                        <p class="page-number">صفحة: ${quote.page}</p>
+                        <div class="quote-actions">
+                            <button class="action-button copy-button" data-text="${quote.text}" data-page="${quote.page}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"/>
+                                </svg>
+                                نسخ
+                            </button>
+                            <button class="action-button share-button" data-text="${quote.text}" data-page="${quote.page}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12C9 11.76 8.96 11.53 8.91 11.3L15.96 7.15C16.44 7.62 17.12 7.92 18 7.92C19.66 7.92 21 6.58 21 4.92C21 3.26 19.66 1.92 18 1.92C16.34 1.92 15 3.26 15 4.92C15 5.21 15.05 5.49 15.12 5.76L8.07 9.91C7.59 9.43 6.91 9.13 6 9.13C4.34 9.13 3 10.47 3 12.13C3 13.79 4.34 15.13 6 15.13C6.91 15.13 7.59 14.83 8.07 14.35L15.12 18.5C15.05 18.77 15 19.05 15 19.34C15 21 16.34 22.34 18 22.34C19.66 22.34 21 21 21 19.34C21 17.68 19.66 16.34 18 16.34V16.08Z"/>
+                                </svg>
+                                مشاركة
+                            </button>
+                        </div>
+                    `;
+                    quotesContainer.appendChild(card);
+                });
+
+                // إضافة مستمعي الأحداث لأزرار النسخ والمشاركة بعد عرض البطاقات
+                document.querySelectorAll('.copy-button').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const quoteText = event.currentTarget.dataset.text;
+                        const pageNumber = event.currentTarget.dataset.page;
+                        const textToCopy = `"${quoteText}" - صفحة: ${pageNumber} ✨🔎 ${window.location.href}`;
+                        
+                        const tempInput = document.createElement('textarea');
+                        tempInput.value = textToCopy;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(tempInput);
+                        
+                        showMessage('تم النسخ إلى الحافظة!');
+                    });
+                });
+
+                document.querySelectorAll('.share-button').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        const quoteText = event.currentTarget.dataset.text;
+                        const pageNumber = event.currentTarget.dataset.page;
+                        const shareText = `"${quoteText}" - صفحة: ${pageNumber} ✨🔎`;
+                        const shareUrl = window.location.href;
+
+                        if (navigator.share) {
+                            try {
+                                await navigator.share({
+                                    title: 'اقتباس من الداء و الدواء',
+                                    text: shareText,
+                                    url: shareUrl,
+                                });
+                            } catch (error) {
+                                console.error('فشل المشاركة:', error);
+                                showMessage('فشل المشاركة.');
+                            }
+                        } else {
+                            // Fallback for browsers that don't support Web Share API
+                            const fallbackText = `${shareText} ${shareUrl}`;
+                            const tempInput = document.createElement('textarea');
+                            tempInput.value = fallbackText;
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                            showMessage('تم نسخ النص والرابط للمشاركة!');
+                        }
+                    });
+                });
+            }
+
+            // تصفية الاقتباسات بناءً على إدخال البحث والفئة
+            function filterQuotes(searchTerm, category) {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                let filtered = quotes.filter(quote =>
+                    quote.text.toLowerCase().includes(lowerCaseSearchTerm)
+                );
+
+                if (category !== 'الكل') {
+                    filtered = filtered.filter(quote => quote.category === category);
+                }
+                renderQuotes(filtered);
+            }
+
+            // تبديل الثيم
+            function toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+                
+                // Update mobile theme toggle
+                themeIconMobile.textContent = isDarkMode ? '🌙' : '☀️';
+                themeTextMobile.textContent = isDarkMode ? 'الوضع النهاري' : 'الوضع الليلي';
+
+                // Update desktop theme toggle
+                themeIconDesktop.textContent = isDarkMode ? '🌙' : '☀️';
+                themeTextDesktop.textContent = isDarkMode ? 'الوضع النهاري' : 'الوضع الليلي';
+            }
+
+            // تحميل الثيم المحفوظ
+            function loadTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    themeIconMobile.textContent = '🌙';
+                    themeTextMobile.textContent = 'الوضع النهاري';
+                    themeIconDesktop.textContent = '🌙';
+                    themeTextDesktop.textContent = 'الوضع النهاري';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    themeIconMobile.textContent = '☀️';
+                    themeTextMobile.textContent = 'الوضع الليلي';
+                    themeIconDesktop.textContent = '☀️';
+                    themeTextDesktop.textContent = 'الوضع الليلي';
+                }
+            }
+
+            // عرض الفئات في الشريط الجانبي
+            function renderCategories() {
+                const categories = ['الكل', ...new Set(quotes.map(q => q.category))].sort();
+                categoryList.innerHTML = '';
+                categories.forEach(cat => {
+                    const listItem = document.createElement('li');
+                    listItem.className = `sidebar-category-item ${cat === currentCategory ? 'active' : ''}`;
+                    listItem.textContent = cat;
+                    listItem.addEventListener('click', () => {
+                        currentCategory = cat;
+                        // إزالة الفئة النشطة من جميع العناصر
+                        document.querySelectorAll('.sidebar-category-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        // إضافة الفئة النشطة إلى العنصر الذي تم النقر عليه
+                        listItem.classList.add('active');
+                        filterQuotes(searchInput.value, currentCategory);
+                        if (window.innerWidth < 768) { // إغلاق الشريط الجانبي على الجوال بعد التحديد
+                            toggleSidebar();
+                        }
+                    });
+                    categoryList.appendChild(listItem);
+                });
+            }
+
+            // تبديل رؤية الشريط الجانبي
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('open');
+            }
+
+            // مستمعو الأحداث
+            searchInput.addEventListener('input', (event) => {
+                filterQuotes(event.target.value, currentCategory);
+            });
+
+            themeToggleMobile.addEventListener('click', toggleTheme);
+            themeToggleDesktop.addEventListener('click', toggleTheme);
+            hamburgerButton.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar); // إغلاق الشريط الجانبي عند النقر على التراكب
+
+            // العرض الأولي والإعداد
+            loadTheme();
+            renderKeywords();
+            renderCategories();
+            filterQuotes(searchInput.value, currentCategory); // العرض الأولي بالفئة الافتراضية
+        });
+    </script>
+</body>
+</html>
